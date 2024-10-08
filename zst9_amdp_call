@@ -1,0 +1,23 @@
+*&---------------------------------------------------------------------*
+*& Report zst9_amdp_call
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT zst9_amdp_call.
+
+DATA(obj_proc_call) = NEW zst9_simple_procedures( ).
+data it_sales_types type ZST9_TT_SALES_TYPE.
+
+select auart, lfarv from tvak into table @it_sales_types.
+
+CALL METHOD zst9_simple_procedures=>get_sales_details
+  EXPORTING
+    im_sales_types = it_sales_types
+  IMPORTING
+   ex_sales_details = data(it_sales_datails)
+  .
+
+CALL METHOD obj_proc_call->get_material
+  IMPORTING
+    ex_mat_details = DATA(it_material).
+
