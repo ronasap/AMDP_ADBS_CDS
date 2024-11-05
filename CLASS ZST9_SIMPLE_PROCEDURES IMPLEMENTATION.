@@ -1,0 +1,51 @@
+CLASS ZST9_SIMPLE_PROCEDURES DEFINITION PUBLIC.
+
+  PUBLIC SECTION.
+    INTERFACES IF_AMDP_MARKER_HDB.
+
+    TYPES: BEGIN OF TYP_SALES,
+             VBELN TYPE VBELN,
+             AUART TYPE AUART,
+           END OF TYP_SALES,
+
+           BEGIN OF TYP_MAT,
+             MATNR TYPE MATNR,
+             MTART TYPE MTART,
+           END OF TYP_MAT,
+
+           TT_SALES_DETAILS TYPE TABLE OF TYP_SALES,
+           TT_MAT_DETAILS   TYPE TABLE OF TYP_MAT.
+
+
+    CLASS-METHODS GET_SALES_DETAILS     IMPORTING VALUE(IM_SALES_TYPES)   TYPE ZST9_TT_SALES_TYPE
+                                        EXPORTING VALUE(EX_SALES_DETAILS) TYPE TT_SALES_DETAILS.
+
+    METHODS GET_MATERIAL                EXPORTING VALUE(EX_MAT_DETAILS) TYPE TT_MAT_DETAILS.
+
+  PROTECTED SECTION.
+  PRIVATE SECTION.
+ENDCLASS.
+
+
+
+CLASS ZST9_SIMPLE_PROCEDURES IMPLEMENTATION.
+
+  METHOD GET_SALES_DETAILS BY DATABASE PROCEDURE FOR HDB LANGUAGE
+                              SQLSCRIPT OPTIONS READ-ONLY USING VBAK TVAK.
+
+    it_sales_types = select auart from tvak where auart like 'Z%';
+
+
+    ex_sales_details = select vbeln, auart from vbak
+                            where auart in (select * from :it_sales_types);
+
+  ENDMETHOD.
+
+  METHOD GET_MATERIAL BY DATABASE PROCEDURE FOR HDB LANGUAGE
+                              SQLSCRIPT OPTIONS READ-ONLY USING MARA.
+    ex_mat_details = select matnr, mtart from mara;
+
+  ENDMETHOD.
+
+
+ENDCLASS.
