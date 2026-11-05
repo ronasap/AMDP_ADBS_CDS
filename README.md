@@ -1,2 +1,3 @@
-# AMDP_ADBS_CDS
-Stored Procedures in ABAP reports using ADBC
+# ABAP CDS Table Function Implemented by AMDP
+
+the training project performed by tutorial from sapcodes.com
